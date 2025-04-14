@@ -1,5 +1,5 @@
 // /api/chat.js — backend dla Sprejka z GPT-3.5-Turbo
-import { OpenAI } from "openai";
+import OpenAI from "openai"; // 🔧 bez nawiasów klamrowych!
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
