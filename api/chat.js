@@ -1,22 +1,27 @@
+// /api/chat.js — backend dla Sprejka z GPT-3.5-Turbo
+import { OpenAI } from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method Not Allowed" });
+    return;
   }
 
-  const { messages } = req.body;
+  try {
+    const { messages } = req.body;
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: process.env.OPENAI_MODEL || "gpt-3.5-turbo",
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
       messages
-    })
-  });
+    });
 
-  const data = await response.json();
-  res.status(200).json(data);
+    res.status(200).json(completion);
+  } catch (err) {
+    console.error("Błąd GPT:", err);
+    res.status(500).json({ error: err.message || "Internal Server Error" });
+  }
 }
